@@ -10,13 +10,17 @@ ForEach( $t in $Target ) {
 
         # Kill the GRR Monitor Process(es)
         Get-Process -Name "GRR*" | ForEach-Object {
-            Write-Host "killing grr process $($_.Name) w/ PID $($_.Id)"
+            Write-Host "$($t): killing grr process $($_.Name) w/ PID $($_.Id)"
             Kill -Id $_.Id -Force
         }
 
         # Remove GRR Registry Key
         Write-Host "$($t): removing registry entry"
         Remove-Item HKLM:\SOFTWARE\GRR -Force -Recurse -ErrorAction SilentlyContinue
+
+        # Remove GRR Service
+        Write-Host "$($t): removing grr service"
+        sc.exe delete "grr monitor"
         
         # Remove all GRR Files
         Write-Host "$($t): enumerating grr files"
