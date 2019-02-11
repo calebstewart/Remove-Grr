@@ -1,3 +1,31 @@
+<#
+.SYNOPSIS
+    Removes all traces of GRR from the specified list of clients.
+
+.DESCRIPTION
+    Kills all running GRR processes, and then removes the service,
+    registry componenets and files for the client.
+
+.PARAMETER Credential
+    PSCredential object used to connect to all the given targets.
+
+.OUTPUTS
+    None.
+
+.NOTES
+    Name: Remove-Grr.ps1
+    Author: Caleb Stewart
+    DateCreated: 11FEB2019
+
+.LINK
+    https://github.com/Caleb1994/Remove-Grr
+
+.EXAMPLE
+    PS C:\> echo "172.16.8.10" | Remove-Grr
+
+.EXAMPLE
+    PS C:\> Remove-Grr -Target 192.168.10.10,192.168.10.11,192.168.10.231 -Credential $credentials
+#>
 param(
     [Parameter(Mandatory=$true,ValueFromPipeline=$true)][IPAddress[]]$Target,
     [PSCredential]$Credential = $(Get-Credential)
