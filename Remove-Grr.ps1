@@ -28,7 +28,8 @@
 #>
 param(
     [Parameter(Mandatory=$true,ValueFromPipeline=$true)][IPAddress[]]$Target,
-    [PSCredential]$Credential = $(Get-Credential)
+    [PSCredential]$Credential = $(Get-Credential),
+    [Switch]$Normal
 )
 
 ForEach( $t in $Target ) {
@@ -52,9 +53,18 @@ ForEach( $t in $Target ) {
         
         # Remove all GRR Files
         Write-Host "$($t): enumerating grr files"
-        Get-ChildItem C:\ -Force -Recurse -ErrorAction SilentlyContinue -Include "*GRR*" | ForEach-Object {
-            Write-Host "$($t): removing $($_.FullName)"
-            Remove-Item -Recurse -Path $_.FullName -Force -ErrorAction SilentlyContinue
+        if( -not $Normal ){
+            # This is how this class wanted us to do it...
+            Get-ChildItem C:\ -Force -Recurse -ErrorAction SilentlyContinue -Include "*GRR*" | ForEach-Object {
+                Write-Host "$($t): removing $($_.FullName)"
+                Remove-Item -Recurse -Path $_.FullName -Force -ErrorAction SilentlyContinue
+            }
+        } else {
+            # This is how GRR says to do it in the docs...
+            Write-Host "$($t): removing C:\Windows\System32\GRR"
+            Remove-Item -Recurse -Force -Path "C:\Windows\System32\GRR"
+            Write-Host "$($t): removing C:\Windows\System32\GRR_Installer.txt"
+            Remove-Item -Recurse -Force -Path "C:\Windows\System32\GRR_Installer.txt"
         }
     }
 
